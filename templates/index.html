@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Maps with Weather Info</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function initMap() {
+            const mapOptions = {
+                center: { lat: 23.6978, lng: 120.9605 }, // Center the map on Taiwan
+                zoom: 8,
+            };
+            const map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+            map.addListener('click', function(e) {
+                const lat = e.latLng.lat();
+                const lng = e.latLng.lng();
+
+                // Fetch current weather
+                $.get(`/current/${lat}/${lng}`, function(currentData) {
+                    let displayText = `
+                        Latitude: ${currentData.lat}, Longitude: ${currentData.lng}<br>
+                        Current Temperature: ${currentData.temperature}°C<br>
+                    `;
+
+                    // Fetch historical weather for the past week
+                    $.get(`/history/${lat}/${lng}`, function(historyData) {
+                        displayText += '<br>Historical Temperatures for the Past Week:<br>';
+                        historyData.historical_data.forEach(day => {
+                            displayText += `${day.date}: ${day.temperature}°C<br>`;
+                        });
+                        $('#location').html(displayText);
+                    });
+                });
+            });
+        }
+
+        $(document).ready(function() {
+            initMap();
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="location"></div>
+</body>
+</html>

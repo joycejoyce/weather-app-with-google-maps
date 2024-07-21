@@ -1,0 +1,19 @@
+body {
+    display: flex;
+    margin: 0;
+}
+
+#map {
+    height: 100vh;
+    width: 70%;
+}
+
+#location {
+    width: 30%;
+    padding: 20px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
